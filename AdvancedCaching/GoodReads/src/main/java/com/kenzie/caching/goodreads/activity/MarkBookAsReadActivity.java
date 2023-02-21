@@ -1,5 +1,7 @@
 package com.kenzie.caching.goodreads.activity;
 
+import com.kenzie.caching.goodreads.caching.CacheClient;
+import com.kenzie.caching.goodreads.caching.CachingReadingLogDao;
 import com.kenzie.caching.goodreads.dao.ReadingLogDao;
 import com.kenzie.caching.goodreads.dao.models.ReadingLog;
 
@@ -12,14 +14,17 @@ import javax.inject.Inject;
 public class MarkBookAsReadActivity {
 
     private final ReadingLogDao readingLogDao;
+    private final CachingReadingLogDao cachingReadingLogDao;
 
     /**
      * Constructs an Activity with the given DAOs.
      * @param readingLogDao The ReadingLogDao to use for updating what a user has read
      */
     @Inject
-    public MarkBookAsReadActivity(final ReadingLogDao readingLogDao) {
+    public MarkBookAsReadActivity(final ReadingLogDao readingLogDao, CachingReadingLogDao cachingReadingLogDao) {
+
         this.readingLogDao = readingLogDao;
+        this.cachingReadingLogDao = cachingReadingLogDao;
     }
 
     /**
@@ -33,6 +38,7 @@ public class MarkBookAsReadActivity {
      */
     public ReadingLog handleRequest(final String userId, final String isbn, final ZonedDateTime timestamp,
                                     final int numberPagesInBook) {
+        cachingReadingLogDao.updateReadingProgress(userId,isbn,timestamp,numberPagesInBook,true);
         return readingLogDao.updateReadingProgress(userId, isbn, timestamp, numberPagesInBook, true);
 
     }
