@@ -27,6 +27,8 @@ public class StartGameActivity {
      */
     public StartGameResult enact(StartGameRequest request) {
         gameServer.startGame(request.getUsername());
+        //invalidate score in the cache for the player that started the game
+        cachingLeaderboardDao.invalidateScore(request.getUsername());
         return new StartGameResult();
     }
 }

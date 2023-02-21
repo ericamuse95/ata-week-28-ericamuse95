@@ -1,5 +1,6 @@
 package com.kenzie.caching.goodreads.activity;
 
+import com.kenzie.caching.goodreads.caching.CachingReadingLogDao;
 import com.kenzie.caching.goodreads.dao.ReadingGoalDao;
 import com.kenzie.caching.goodreads.dao.ReadingLogDao;
 import com.kenzie.caching.goodreads.dao.models.ReadingGoal;
@@ -13,7 +14,8 @@ import javax.inject.Inject;
 public class GetGoalProgressActivity {
 
     private final ReadingGoalDao readingGoalDao;
-    private final ReadingLogDao readingLogDao;
+    private final CachingReadingLogDao cachingReadingLogDao;
+
 
     /**
      * Constructs an Activity with the given DAOs.
@@ -21,8 +23,8 @@ public class GetGoalProgressActivity {
      * @param readingGoalDao The ReadingGoalDao to manage the user's reading goal
      */
     @Inject
-    public GetGoalProgressActivity(final ReadingLogDao readingLogDao, final ReadingGoalDao readingGoalDao) {
-        this.readingLogDao = readingLogDao;
+    public GetGoalProgressActivity(final CachingReadingLogDao cachingReadingLogDao, final ReadingGoalDao readingGoalDao) {
+        this.cachingReadingLogDao = cachingReadingLogDao;
         this.readingGoalDao = readingGoalDao;
     }
 
@@ -35,7 +37,7 @@ public class GetGoalProgressActivity {
      */
     public ReadingGoalProgress handleRequest(final String userId, final int year) {
         ReadingGoal readingGoal = readingGoalDao.getGoal(userId, year);
-        int booksRead = readingLogDao.getBooksReadInYear(userId, year);
+        int booksRead = cachingReadingLogDao.getBooksReadInYear(userId, year);
         return new ReadingGoalProgress(readingGoal, booksRead);
     }
 }
